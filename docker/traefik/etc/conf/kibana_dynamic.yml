@@ -4,7 +4,7 @@ http:
     kibana:
       entryPoints:
         - websecure
-      rule: Host(`kibana.localhost`) || PathPrefix(`/xyz`)
+      rule: Host(`kibana.localhost`) || PathPrefix(`/kibana`)
       middlewares:
         - kibana-auth
         - kibana-stripprefix
@@ -17,7 +17,7 @@ http:
     kibana-stripprefix:
       stripPrefix:
         prefixes:
-          - "/xyz"
+          - "/kibana"
   services:
     kibana-service:
       loadBalancer:

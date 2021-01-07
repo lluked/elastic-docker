@@ -11,17 +11,24 @@ This project is intended to be a quick way of bringing the Elastic Stack up behi
 ## Traefik (https://github.com/traefik/traefik)
 
 - Traefik has been set up as a proxy for kibana access
+   
 - Dashboard available at https://localhost/dashboard/
-- username:password -> traefik/traefik
+
+- Credentials:
+   - username:traefik
+   - password:traefik
 
 ## Usage
 
 - Deploy by running docker-compose up at the root of the project.
+
 - Access Kibana with: 
    - https://localhost/kibana/
    - https://kibana.localhost/
-- username:password -> kibana:kibana
 
+- Credentials:
+   - username:kibana
+   - password:kibana
 
 ## Scripts
 - Credentials can be changed by running ./bin/set-passwords.sh
