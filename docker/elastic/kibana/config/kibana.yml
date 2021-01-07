@@ -1,0 +1,6 @@
+# Server
+server.name: kib01
+server.host: "0"
+server.basePath: "/xyz"
+# ElasticSearch
+elasticsearch.hosts: http://es01:9200

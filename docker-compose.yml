@@ -1,0 +1,85 @@
+version: '2.2'
+
+services:
+
+  # Elasticsearch Node 1
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
+    container_name: es01
+    restart: always
+    environment:
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+      - ./docker/elastic/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+    healthcheck:
+      test: curl http://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Kibana Node 1
+  kib01:
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
+    container_name: kibana
+    restart: always
+    depends_on:
+      - es01
+    ports:
+      - 5601:5601
+    networks:
+      - elastic
+    volumes:
+      - ./docker/elastic/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+
+  # Logstash Node 1
+  log01:
+    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}
+    container_name: logstash
+    depends_on:
+      - es01
+    restart: always
+    environment:
+      - "LS_JAVA_OPTS=-Xms1g -Xmx1g"
+    # ports:
+    #   - "5044:5044"
+    #   - "9600:9600"
+    #   - "9700:9700"
+    networks:
+      - elastic
+    volumes:
+      - ./docker/elastic/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./docker/elastic/logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ./docker/elastic/logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./docker/elastic/logstash/db:/usr/share/logstash/db:ro
+      - ./log:/logs:ro
+
+  # Traefik Proxy
+  traefik:
+    image: traefik:$TRAEFIK_VERSION
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./docker/traefik/etc:/etc/traefik:ro
+      - ./log/traefik:/var/log
+    networks:
+      - elastic
+
+volumes:
+  # Elasticsearch Node 1 Volume
+  data01:
+    driver: local
+
+networks:
+  # Elasticsearch Network
+  elastic:
+    driver: bridge

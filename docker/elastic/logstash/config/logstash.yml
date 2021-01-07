@@ -1,0 +1,5 @@
+# Basic
+node.name: "log01"
+http.host: "0"
+# Additonal
+monitoring.enabled: false

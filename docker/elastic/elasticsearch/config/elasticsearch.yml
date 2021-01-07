@@ -1,0 +1,14 @@
+# Cluster
+cluster.name: elastic
+# Node
+node.name: es01
+# Memory
+bootstrap.memory_lock: true
+# Network
+network.host: "0"
+# Discovery
+discovery.type: single-node
+# X-Pack
+xpack.license.self_generated.type: trial
+# Legacy
+xpack.monitoring.collection.enabled: true
