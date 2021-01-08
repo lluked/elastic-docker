@@ -1,0 +1,17 @@
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+output.elasticsearch:
+  hosts: '${ELASTICSEARCH_HOSTS:es01:9200}'
+  username: '${ELASTICSEARCH_USERNAME:}'
+  password: '${ELASTICSEARCH_PASSWORD:}'
+
+setup.kibana:
+  host: '${KIBANA_host:kibana:5601}'
+
+monitoring:
+  enabled: true
+  cluster_uuid: elastic
+  elasticsearch: "http://es01:9200"

@@ -1,5 +1,6 @@
 # Basic
-node.name: "log01"
+node.name: logstash
 http.host: "0"
-# Additonal
-monitoring.enabled: false
+# Enable Legacy Monitoring
+xpack.monitoring.enabled: true
+xpack.monitoring.elasticsearch.hosts: http://es01:9200

@@ -22,8 +22,8 @@ services:
       timeout: 10s
       retries: 5
 
-  # Kibana Node 1
-  kib01:
+  # Kibana
+  kibana:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
     container_name: kibana
     restart: always
@@ -38,8 +38,24 @@ services:
     volumes:
       - ./docker/elastic/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
 
-  # Logstash Node 1
-  log01:
+  # Traefik
+  traefik:
+    image: traefik:$TRAEFIK_VERSION
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./docker/traefik/etc:/etc/traefik:ro
+      - ./log/traefik:/var/log
+    networks:
+      - elastic
+
+  # Logstash
+  logstash:
     image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}
     container_name: logstash
     depends_on:
@@ -60,28 +76,30 @@ services:
       - ./docker/elastic/logstash/db:/usr/share/logstash/db:ro
       - ./log:/logs:ro
 
-  # Traefik Proxy
-  traefik:
-    image: traefik:$TRAEFIK_VERSION
-    container_name: traefik
+  # Filebeat
+  filebeat:
+    build:
+      context: ./docker/elastic/beats/filebeat/
+      dockerfile: Dockerfile
+      args:
+        ELASTIC_VERSION: $ELASTIC_VERSION
+    container_name: filebeat
     restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /etc/localtime:/etc/localtime:ro
-      - ./docker/traefik/etc:/etc/traefik:ro
-      - ./log/traefik:/var/log
+    depends_on:
+      - es01
     networks:
       - elastic
+    volumes:
+      - ./log/filbeat:/logs:ro
 
 volumes:
+
   # Elasticsearch Node 1 Volume
   data01:
     driver: local
 
 networks:
+
   # Elasticsearch Network
   elastic:
     driver: bridge

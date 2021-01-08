@@ -1,5 +1,5 @@
 # Server
-server.name: kib01
+server.name: kibana
 server.host: "0"
 server.basePath: "/kibana"
 # ElasticSearch

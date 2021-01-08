@@ -8,7 +8,7 @@ bootstrap.memory_lock: true
 network.host: "0"
 # Discovery
 discovery.type: single-node
-# X-Pack
+# Generate Trial License
 xpack.license.self_generated.type: trial
-# Legacy
+# Enable Legacy Monitoring
 xpack.monitoring.collection.enabled: true
